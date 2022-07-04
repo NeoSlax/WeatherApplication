@@ -1,4 +1,4 @@
-package ru.neoslax.weather.domain.weather
+package ru.neoslax.weather.domain.util
 
 import androidx.annotation.DrawableRes
 import ru.neoslax.weather.R
