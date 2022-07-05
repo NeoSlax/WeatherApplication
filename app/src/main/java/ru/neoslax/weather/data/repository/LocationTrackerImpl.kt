@@ -62,9 +62,10 @@ class LocationTrackerImpl @Inject constructor(
     private fun checkGpsEnabled(): Boolean {
         val locationManager =
             application.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                locationManager.isProviderEnabled(
-                    LocationManager.NETWORK_PROVIDER
-                )
+        val gpsLocationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        val wifiLocationEnabled =
+            locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+
+        return gpsLocationEnabled || wifiLocationEnabled
     }
 }
