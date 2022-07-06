@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.magnifier
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -18,32 +19,51 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.neoslax.weather.domain.entities.WeatherData
 import ru.neoslax.weather.domain.entities.WeatherState
+import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Composable
 fun WeatherForecast(
     state: WeatherState,
     modifier: Modifier = Modifier
 ) {
-    state.weatherInfo?.weatherDataPerDay?.get(0)?.let { data ->
+    state.weatherInfo?.weatherDataPerDay?.let { dataMap ->
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
         ) {
-            Text(text = "Today", fontSize = 24.sp, color = Color.White)
+            val listState = rememberLazyListState()
+            val calendarDate = Calendar.getInstance()
+
+            val currentDay = when (val hour = listState.firstVisibleItemIndex) {
+                in 0..23 -> "Today"
+                else -> calendarDate.run {
+                    val formatter = SimpleDateFormat("dd MMMM")
+                    add(Calendar.DATE, hour / 24)
+                    formatter.format(this.time)
+                }
+            }
+            Text(
+                text = "$currentDay",
+                fontSize = 24.sp,
+                color = Color.White,
+                modifier = Modifier.padding(start = 16.dp)
+            )
             Spacer(modifier = Modifier.size(16.dp))
             LazyRow(content = {
-                items(data) { weatherData ->
-                    WeatherForecastEntity(
-                        data = weatherData,
-                        modifier = Modifier
-                            .height(100.dp)
-                            .padding(horizontal = 16.dp)
-                    )
+                dataMap.forEach {
+                    items(it.value) { weatherItem ->
+                        WeatherForecastEntity(
+                            data = weatherItem,
+                            modifier = Modifier
+                                .height(100.dp)
+                                .padding(horizontal = 16.dp)
+                        )
+                    }
                 }
-            })
+            }, state = listState)
         }
     }
 }
