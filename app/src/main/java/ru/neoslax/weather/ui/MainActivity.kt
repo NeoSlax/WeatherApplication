@@ -2,6 +2,8 @@ package ru.neoslax.weather.ui
 
 import android.Manifest
 import android.os.Bundle
+import android.view.Window
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
@@ -14,12 +16,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import dagger.hilt.android.AndroidEntryPoint
 import ru.neoslax.weather.ui.theme.DarkBlue
 import ru.neoslax.weather.ui.theme.LightBlue
+import ru.neoslax.weather.ui.theme.SoftGray
 import ru.neoslax.weather.ui.theme.WeatherTheme
 
 @AndroidEntryPoint
@@ -42,11 +48,17 @@ class MainActivity : ComponentActivity() {
             )
         )
         setContent {
+            window.statusBarColor = SoftGray.toArgb()
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+
             WeatherTheme {
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .background(LightBlue)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(LightBlue)
+                ) {
                     Column(modifier = Modifier.fillMaxSize()) {
+                        Spacer(modifier = Modifier.size(16.dp))
                         WeatherCard(state = viewModel.state, backgroundColor = DarkBlue)
                         Spacer(modifier = Modifier.size(16.dp))
                         WeatherForecast(state = viewModel.state)
@@ -58,8 +70,10 @@ class MainActivity : ComponentActivity() {
                     }
                     viewModel.state.error?.let {
 
-                        Column(modifier = Modifier.align(Alignment.Center),
-                        horizontalAlignment = Alignment.CenterHorizontally) {
+                        Column(
+                            modifier = Modifier.align(Alignment.Center),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
                             Text(
                                 text = it,
                                 color = Color.Red,
@@ -70,8 +84,6 @@ class MainActivity : ComponentActivity() {
                                 Text(text = "Reload")
                             }
                         }
-
-
                     }
                 }
             }
