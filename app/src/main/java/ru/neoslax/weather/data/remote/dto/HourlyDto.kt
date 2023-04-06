@@ -1,8 +1,10 @@
 package ru.neoslax.weather.data.remote.dto
 
 
+import androidx.annotation.Keep
 import com.squareup.moshi.Json
 
+@Keep
 data class HourlyDto(
     val time: List<String>,
     @field:Json(name = "temperature_2m")
